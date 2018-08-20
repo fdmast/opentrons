@@ -26,6 +26,9 @@ ifeq ($(watch), true)
 	cover := false
 endif
 
+# run at usage (=), not on makefile parse (:=)
+usb_host = $(shell yarn run -s discovery find -i 169.254 fd00 -c "[fd00:0:cafe:fefe::1]")
+
 # install all project dependencies
 # front-end dependecies handled by yarn
 .PHONY: install
@@ -53,10 +56,16 @@ install-types:
 	flow-typed install --overwrite --flowVersion=0.61.0
 
 .PHONY: push-api
+push-api: export host = $(usb_host)
 push-api:
 	$(MAKE) -C $(API_LIB_DIR) push
 	$(MAKE) -C $(API_DIR) push
 	$(MAKE) -C $(API_DIR) restart
+
+.PHONY: term
+term: export host = $(usb_host)
+term:
+	$(MAKE) -C $(API_DIR) term
 
 # all tests
 .PHONY: test
