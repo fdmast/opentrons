@@ -97,6 +97,10 @@ COPY ./compute/find_python_module_path.py /usr/local/bin/
 RUN ln -sf /data/system/ot-environ.sh /etc/profile.d/00-persistent-ot-environ.sh &&\
     ln -sf `find_python_module_path.py opentrons`/resources/ot-environ.sh /etc/profile.d/01-builtin-ot-environ.sh
 
+# The version for the system container. Keep this semver compliant and change it
+# only for releases that actually change the system
+RUN echo "export OT_SYSTEM_VERSION=3.3.0+resin" >> /etc/profile
+
 
 # This configuration is used both by both the build and runtime so it has to
 # be here. When building a container for local use, set this to 0. If set to

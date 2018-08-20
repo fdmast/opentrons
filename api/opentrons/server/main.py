@@ -30,15 +30,11 @@ log_file_path = environment.get_path('LOG_DIR')
 
 def lock_resin_updates():
     if os.environ.get('RUNNING_ON_PI'):
-        import fcntl
-
-        try:
-            with open(lock_file_path, 'w') as fd:
-                fd.write('a')
-                fcntl.flock(fd, fcntl.LOCK_EX)
-                fd.close()
-        except OSError:
-            log.warning('Unable to create resin-update lock file')
+        if os.path.exists(lock_file_path):
+            try:
+                os.remove(lock_file_path)
+            except OSError:
+                log.exception('Unable to remove resin-update lock file')
 
 
 def unlock_resin_updates():
